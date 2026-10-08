@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>旋转体体积｜从平面切片到空间微元</title>
+  <style>
+    :root{--paper:#f7f4eb;--ink:#182e34;--muted:#52656a;--line:#cbd6cf;--teal:#087c78;--tealSoft:#dcece6;--coral:#c4563e;--gold:#c58b37;--white:#fffdf7}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",sans-serif;line-height:1.55}
+    body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.34;background-image:radial-gradient(#817c6b 0.48px,transparent .48px);background-size:9px 9px}
+    .wrap{position:relative;max-width:1500px;margin:auto;padding:32px clamp(16px,3vw,46px) 46px}
+    .mast{border-top:5px solid var(--ink);padding-top:18px;display:flex;justify-content:space-between;gap:20px;align-items:start}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.18em;color:var(--teal)}
+    h1{font-family:Georgia,"Noto Serif SC","Songti SC",serif;letter-spacing:.02em;font-size:clamp(30px,4.3vw,58px);line-height:1.14;margin:12px 0 9px}.intro{margin:0;color:var(--muted);font-size:15px}.mark{font-family:Georgia,serif;border:1px solid var(--ink);border-radius:50%;min-width:52px;height:52px;display:grid;place-items:center;font-size:18px;flex:none}
+    .controlbar{display:grid;grid-template-columns:auto auto minmax(210px,1fr);gap:22px;align-items:end;background:var(--white);border:1px solid var(--line);box-shadow:0 10px 30px #1c39330e;padding:20px 24px;margin:28px 0 14px}
+    .control-label{display:block;font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--muted);margin-bottom:9px}.toggle{display:flex;background:#e7eee9;padding:4px;border-radius:6px;gap:3px}.toggle button{border:0;border-radius:4px;background:transparent;color:#3c5658;font:700 14px inherit;padding:9px 15px;cursor:pointer;white-space:nowrap}.toggle button[aria-pressed="true"]{background:var(--ink);color:#fff;box-shadow:0 3px 9px #182e3430}.toggle button:focus-visible,input:focus-visible{outline:3px solid var(--coral);outline-offset:3px}
+    .slider-head{display:flex;justify-content:space-between;gap:10px}.slider-head strong{font:700 19px Georgia,serif;color:var(--coral)}input[type=range]{width:100%;accent-color:var(--coral);cursor:pointer;margin:10px 0 0}
+    .hint{font-size:12px;color:var(--muted);margin:0 0 16px}.stage{display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);gap:14px}.panel{background:var(--white);border:1px solid var(--line);min-width:0;padding:18px 18px 9px}.panel-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:10px}.panel h2{font-size:17px;letter-spacing:.03em;margin:0}.panel small{color:var(--muted);font-size:12px}.scene{display:block;width:100%;height:auto;overflow:visible}.scene text{font-family:"Microsoft YaHei","PingFang SC",sans-serif;fill:var(--ink)}.scene .axisText{font:italic 17px Georgia,serif}.scene .faint{fill:#708287}.scene .accent{fill:var(--coral);font-weight:800}.scene .teal{fill:var(--teal);font-weight:800}.caption{font-size:13px;color:var(--muted);margin:0 0 11px;min-height:41px}
+    .readout{margin-top:14px;display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.74fr);gap:14px}.card{background:#e7eee9;border:1px solid #cbd9d1;padding:20px 23px}.card.dark{background:var(--ink);border-color:var(--ink);color:#fff}.tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.13em;color:var(--teal);margin-bottom:9px}.dark .tag{color:#a8dad0}.method-title{font:700 clamp(20px,2.2vw,28px) Georgia,"Noto Serif SC",serif;margin:0 0 10px}.formula{font:600 clamp(20px,2.5vw,30px) Georgia,"Times New Roman",serif;letter-spacing:.02em;margin:0 0 5px;overflow-wrap:anywhere}.subformula{font-size:14px;margin:0;color:#c5e1dc}.values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.value{border-bottom:1px solid #bed0c9;padding-bottom:8px}.value span{display:block;font-size:12px;color:var(--muted)}.value strong{display:block;font:700 21px Georgia,"Microsoft YaHei",serif;color:var(--ink);margin-top:3px}.value:last-child{grid-column:1/-1;border:0;padding:0}.note{font-size:13px;color:var(--muted);margin:18px 1px 0}.note strong{color:var(--ink)}
+    @media(max-width:900px){.controlbar{grid-template-columns:1fr 1fr}.slider-box{grid-column:1/-1}.stage{grid-template-columns:1fr}.readout{grid-template-columns:1fr}.panel{padding:16px}.scene{max-height:450px}}
+    @media(max-width:520px){.wrap{padding:18px 11px 28px}.mast{padding-top:11px}.mark{width:38px;min-width:38px;height:38px;font-size:14px}.controlbar{grid-template-columns:minmax(0,1fr);gap:14px;padding:14px;margin-top:20px}.controlbar>div{min-width:0}.toggle button{padding:8px 9px;font-size:12px}.panel-head{display:block}.panel small{display:block;margin-top:3px}.caption{font-size:12px}.card{padding:16px}.formula{font-size:20px}}
+    @media(prefers-reduced-motion:no-preference){.panel,.card{animation:rise .55s both}.stage .panel:nth-child(2){animation-delay:.08s}.readout .card{animation-delay:.15s}@keyframes rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}}
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <header class="mast"><div><div class="eyebrow">VISUAL CALCULUS · 旋转体</div><h1>从一条切片，到一个立体微元</h1><p class="intro">区域 D = {(x, y)｜0 ≤ x ≤ 1，0 ≤ y ≤ x}。换轴、换切法，观察同一平面区域如何生成体积。</p></div><div class="mark" aria-hidden="true">∫</div></header>
+  <section class="controlbar" aria-label="交互控制">
+    <div><span class="control-label">01 · 绕哪条轴旋转</span><div class="toggle" role="group" aria-label="旋转轴"><button type="button" id="axisX" aria-pressed="true">绕 x 轴</button><button type="button" id="axisY" aria-pressed="false">绕 y 轴</button></div></div>
+    <div><span class="control-label">02 · 怎样切</span><div class="toggle" role="group" aria-label="积分方法"><button type="button" id="methodCross" aria-pressed="true">圆盘 / 圆环</button><button type="button" id="methodShell" aria-pressed="false">圆柱壳</button></div></div>
+    <div class="slider-box"><div class="slider-head"><label class="control-label" for="slice" style="margin:0">03 · 移动积分切片</label><strong id="sliceValue">x = 0.58</strong></div><input id="slice" type="range" min="0.08" max="0.92" value="0.58" step="0.01" aria-label="切片坐标，从 0.08 到 0.92"></div>
+  </section>
+  <p class="hint">操作提示：切换轴或方法后，拖动滑块；左图红色线带是平面切片，右图红色立体是它旋转一周形成的微元。图中厚度为便于观察而放大。</p>
+  <section class="stage" aria-label="二维与三维联动图">
+    <div class="panel"><div class="panel-head"><h2>01 / 平面区域与切片</h2><small>三角形 D · 红色表示当前积分条</small></div><svg id="plane" class="scene" viewBox="0 0 520 350" role="img" aria-label="二维三角形区域与当前积分切片"></svg><p class="caption" id="planeCaption"></p></div>
+    <div class="panel"><div class="panel-head"><h2>02 / 旋转后的三维微元</h2><small>半透明实体 · 显示真实空间厚度</small></div><svg id="solid" class="scene" viewBox="0 0 680 350" role="img" aria-label="当前方法对应的三维圆盘、圆环或圆柱壳微元"></svg><p class="caption" id="solidCaption"></p></div>
+  </section>
+  <section class="readout" aria-live="polite"><div class="card dark"><div class="tag">THE ACTIVE INTEGRAL</div><h2 class="method-title" id="methodTitle"></h2><p class="formula" id="formula"></p><p class="subformula" id="volume"></p></div><div class="card"><div class="tag">CURRENT SLICE · 当前切片</div><div class="values"><div class="value"><span id="radiusName">半径</span><strong id="radiusValue"></strong></div><div class="value"><span id="heightName">切片长度</span><strong id="heightValue"></strong></div><div class="value"><span>微元系数（不含 dx / dy）</span><strong id="elementValue"></strong></div></div></div></section>
+  <p class="note"><strong>读图关键：</strong>垂直于旋转轴切，得到圆盘或圆环；平行于旋转轴切，得到圆柱壳。右图的有限厚度用于看清三维形状，积分公式取厚度趋于 0 的极限。</p>
+</main>
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const state = {axis:'x',method:'cross',s:0.58};
+  const esc = n => Number(n).toFixed(2);
+  const line = (x1,y1,x2,y2,stroke,width=2,dash='') => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${width}" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
+  const txt = (x,y,value,klass='',anchor='start') => `<text x="${x}" y="${y}" class="${klass}" text-anchor="${anchor}">${value}</text>`;
+  function plane(){
+    const s=state.s, vertical=(state.axis==='x')===(state.method==='cross');
+    const xx=v=>84+352*v, yy=v=>270-220*v, w=8;
+    let selected='';
+    if(vertical){const x=xx(s);selected=`<path d="M ${x-w/2} 270 L ${x+w/2} 270 L ${x+w/2} ${yy(s+w/704)} L ${x-w/2} ${yy(s-w/704)} Z" fill="#c4563e" fill-opacity=".65" stroke="#a73f2c" stroke-width="1.4"/>${line(x,270,x,yy(s),'#a73f2c',2,'5 4')}${txt(x+12,yy(s)/2+135,state.axis==='x'?'R = x':'h = x','accent')}`;}
+    else{const y=yy(s);selected=`<path d="M ${xx(s-0.018)} ${y+5} L 436 ${y+5} L 436 ${y-5} L ${xx(s+0.018)} ${y-5} Z" fill="#c4563e" fill-opacity=".65" stroke="#a73f2c" stroke-width="1.4"/>${line(xx(s),y,436,y,'#a73f2c',2,'5 4')}${txt((xx(s)+436)/2,y-12,state.axis==='x'?'h = 1 − y':'R = 1, r = y','accent','middle')}`;}
+    $('plane').innerHTML=`<defs><pattern id="grid" width="44" height="44" patternUnits="userSpaceOnUse"><path d="M 44 0 L 0 0 0 44" fill="none" stroke="#dde7df" stroke-width="1"/></pattern><marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 Z" fill="#182e34"/></marker></defs><rect x="42" y="27" width="435" height="278" fill="url(#grid)"/><path d="M84 270 L436 270 L436 50 Z" fill="#dcece6" stroke="#087c78" stroke-width="2.4"/>${selected}${line(62,270,478,270,'#182e34',2.4)}${line(84,301,84,25,'#182e34',2.4)}${txt(487,275,'x','axisText')}${txt(75,20,'y','axisText')}${txt(69,290,'O','axisText')}${txt(436,292,'1','axisText','middle')}${txt(65,56,'1','axisText')}${txt(302,126,'y = x','teal')}${txt(346,244,'D','teal')}${vertical?txt(xx(s),305,state.axis==='x'?'x':'x','accent','middle'):txt(67,yy(s)+6,'y','accent','middle')}`;
+    $('planeCaption').textContent=vertical?(state.axis==='x'?'固定 x：0 ≤ y ≤ x，竖条绕 x 轴生成实心圆盘。':'固定 x：0 ≤ y ≤ x，竖条绕 y 轴生成半径 x、高 x 的圆柱壳。'):(state.axis==='x'?'固定 y：y ≤ x ≤ 1，横条绕 x 轴生成半径 y、长 1−y 的圆柱壳。':'固定 y：y ≤ x ≤ 1，横条绕 y 轴生成外半径 1、内半径 y 的圆环。');
+  }
+  // t is distance along the chosen rotation axis; r is distance from it.
+  // Parallel projection keeps the circular cross-section as a visible ellipse.
+  function P(t,r,a){return [140+352*t+109*r*Math.cos(a),267-57*t+51*r*Math.sin(a)];}
+  const pt=(t,r,a)=>P(t,r,a).map(n=>n.toFixed(1)).join(' ');
+  function ring(t,r){let out='';for(let i=0;i<=64;i++){const p=P(t,r,2*Math.PI*i/64);out+=(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)+' ';}return out+'Z';}
+  function annulus(t,ro,ri,fill,stroke='#a9402f',opacity=1){return `<path d="${ring(t,ro)} ${ring(t,ri)}" fill="${fill}" fill-rule="evenodd" fill-opacity="${opacity}" stroke="${stroke}" stroke-width="1.3"/>`;}
+  function side(tA,tB,rA,rB,color,opacity){let out='';for(let i=0;i<32;i++){let a=2*Math.PI*i/32,b=2*Math.PI*(i+1)/32;out+=`<path d="M ${pt(tA,rA,a)} L ${pt(tA,rA,b)} L ${pt(tB,rB,b)} L ${pt(tB,rB,a)} Z" fill="${color}" fill-opacity="${opacity*(0.8+0.2*Math.sin((a+b)/2))}" stroke="#8e4439" stroke-opacity=".16" stroke-width=".7"/>`;}return out;}
+  function ghost(){
+    let s=`${line(94,275,575,197,'#789b96',1.4,'5 5')}`;
+    if(state.axis==='x'){
+      s+=`<path d="M ${pt(0,0,0)} L ${pt(1,1,Math.PI)} A 109 51 0 1 1 ${pt(1,1,Math.PI+.001)} Z" fill="#b9d6ca" fill-opacity=".17"/>`;
+      for(let i=0;i<12;i++){let a=2*Math.PI*i/12;s+=line(...P(0,0,0),...P(1,1,a),'#8eafa5',1,i<6?'4 4':'');}
+      s+=`<path d="${ring(1,1)}" fill="none" stroke="#6b9f94" stroke-width="1.7" stroke-dasharray="4 4"/>`;
+    }else{
+      s+=`<path d="${ring(0,1)}" fill="#b9d6ca" fill-opacity=".09" stroke="#8eafa5" stroke-dasharray="4 4"/><path d="${ring(1,1)}" fill="none" stroke="#6b9f94" stroke-width="1.7" stroke-dasharray="4 4"/>`;
+      for(let i=0;i<12;i++){let a=2*Math.PI*i/12;s+=line(...P(0,1,a),...P(1,1,a),'#8eafa5',1,i<6?'4 4':'');s+=line(...P(0,0,0),...P(1,1,a),'#a3bbb1',.8,'3 5');}
+    }
+    return s;
+  }
+  function arrow(x1,y1,x2,y2,color,label,lx,ly){return `${line(x1,y1,x2,y2,color,2.4)}<circle cx="${x1}" cy="${y1}" r="3.5" fill="${color}"/><circle cx="${x2}" cy="${y2}" r="3.5" fill="${color}"/>${txt(lx,ly,label,color==='#c4563e'?'accent':'teal')}`;}
+  function solid(){
+    const s=state.s,dt=.075,da=.06;
+    let g=ghost(),shape='',measure='',head='';
+    if(state.method==='cross'){
+      const a=Math.max(0,s-dt/2),b=Math.min(1,s+dt/2);
+      if(state.axis==='x'){
+        shape=`<path d="${ring(b,b)}" fill="#edbba7" fill-opacity=".76" stroke="#a9402f" stroke-width="1.5"/>${side(a,b,a,b,'#d2644a',.76)}<path d="${ring(a,a)}" fill="#f2c4ad" fill-opacity=".85" stroke="#a9402f" stroke-width="2"/>`;
+        const q=P(a,a,0),c=P(a,0,0);measure=arrow(c[0],c[1],q[0],q[1],'#c4563e','R = x',q[0]-42,q[1]-10);head='圆盘：有厚度的实心圆柱片';
+      }else{
+        shape=`${annulus(b,1,b,'#eab49e','#a9402f',.76)}${side(a,b,1,1,'#d2644a',.67)}${side(a,b,a,b,'#c4563e',.4)}${annulus(a,1,a,'#f2c4ad','#a9402f',.88)}`;
+        let c=P(a,0,0),q=P(a,a,0),v=P(a,1,0);measure=arrow(c[0],c[1],q[0],q[1],'#087c78','r = y',q[0]-38,q[1]-10)+arrow(c[0],c[1]+15,v[0],v[1]+15,'#c4563e','R = 1',v[0]-38,v[1]+33);head='圆环：中心挖空的环形厚片';
+      }
+    }else{
+      const rin=s-da/2,rout=s+da/2;
+      const tA=state.axis==='x'?rout:0,tB=state.axis==='x'?1:rin;
+      // The ends of a finite shell approximate the sloped boundary;
+      // in the differential limit this is the exact cylindrical shell.
+      shape=`${annulus(tB,rout,rin,'#eab49e','#a9402f',.66)}${side(tA,tB,rout,rout,'#d2644a',.56)}${side(tA,tB,rin,rin,'#9fbeae',.43)}${annulus(tA,rout,rin,'#f2c4ad','#a9402f',.94)}<path d="${ring(tA,rout)}" fill="none" stroke="#a9402f" stroke-width="1.7"/><path d="${ring(tB,rout)}" fill="none" stroke="#a9402f" stroke-width="1.7"/>`;
+      let c=P(tA,0,0),q=P(tA,s,0),u=P(tA,rout,0),v=P(tB,rout,0);measure=arrow(c[0],c[1],q[0],q[1],'#c4563e',state.axis==='x'?'r = y':'r = x',q[0]-40,q[1]-10)+arrow(u[0],u[1]-16,v[0],v[1]-16,'#087c78',state.axis==='x'?'h = 1 − y':'h = x',(u[0]+v[0])/2-28,(u[1]+v[1])/2-30);head='圆柱壳：有壁厚、沿旋转轴伸展';
+    }
+    $('solid').innerHTML=`<rect x="4" y="8" width="672" height="310" rx="7" fill="#f6f8f2"/><defs><pattern id="floor" width="29" height="29" patternUnits="userSpaceOnUse"><path d="M29 0 L0 0 0 29" fill="none" stroke="#e3e9e2"/></pattern></defs><path d="M16 275 L482 201 L657 244 L161 328 Z" fill="url(#floor)" opacity=".9"/>${g}${shape}${measure}${txt(22,36,head,'teal')}${txt(146,290,'0','','middle')}${txt(493,208,'1','','middle')}${txt(555,300,state.axis==='x'?'绕 x 轴 ↻':'绕 y 轴 ↻','faint')}`;
+    $('solidCaption').textContent=state.method==='cross'?(state.axis==='x'?'薄圆盘在 x 方向有厚度 dx；截面半径 x，截面积 πx²。':'薄圆环在 y 方向有厚度 dy；截面面积 π(1²−y²)。'):(state.axis==='x'?'圆柱壳壁厚 dy，半径 y，轴向高度 1−y；侧面积乘壁厚。':'圆柱壳壁厚 dx，半径 x，轴向高度 x；侧面积乘壁厚。');
+  }
+  function update(){
+    let s=state.s, cross=state.method==='cross';
+    const isX=state.axis==='x';
+    $('sliceValue').textContent=(isX===cross?'x':'y')+' = '+esc(s);
+    // Coordinate of a slice: x for x-disk / y-shell; y for y-washer / x-shell.
+    if(isX&&cross){$('methodTitle').textContent='绕 x 轴 · 圆盘法';$('formula').innerHTML='V = ∫₀¹ πx² dx = π/3';$('volume').textContent='dV = πx² dx';$('radiusName').textContent='圆盘半径 R = x';$('radiusValue').textContent=esc(s);$('heightName').textContent='截面内半径';$('heightValue').textContent='0（实心）';$('elementValue').textContent=`${esc(Math.PI*s*s)} · dx`;}
+    if(isX&&!cross){$('methodTitle').textContent='绕 x 轴 · 圆柱壳法';$('formula').innerHTML='V = ∫₀¹ 2πy(1−y) dy = π/3';$('volume').textContent='dV = 2π·半径·高度·dy';$('radiusName').textContent='壳半径 r = y';$('radiusValue').textContent=esc(s);$('heightName').textContent='壳高度 h = 1−y';$('heightValue').textContent=esc(1-s);$('elementValue').textContent=`${esc(2*Math.PI*s*(1-s))} · dy`;}
+    if(!isX&&cross){$('methodTitle').textContent='绕 y 轴 · 圆环法';$('formula').innerHTML='V = ∫₀¹ π(1−y²) dy = 2π/3';$('volume').textContent='dV = π(R²−r²) dy';$('radiusName').textContent='外半径 R / 内半径 r';$('radiusValue').textContent=`1 / ${esc(s)}`;$('heightName').textContent='圆环截面积';$('heightValue').textContent=`${esc(Math.PI*(1-s*s))}`;$('elementValue').textContent=`${esc(Math.PI*(1-s*s))} · dy`;}
+    if(!isX&&!cross){$('methodTitle').textContent='绕 y 轴 · 圆柱壳法';$('formula').innerHTML='V = ∫₀¹ 2πx² dx = 2π/3';$('volume').textContent='dV = 2π·半径·高度·dx';$('radiusName').textContent='壳半径 r = x';$('radiusValue').textContent=esc(s);$('heightName').textContent='壳高度 h = x';$('heightValue').textContent=esc(s);$('elementValue').textContent=`${esc(2*Math.PI*s*s)} · dx`;}
+    $('axisX').setAttribute('aria-pressed',String(isX));$('axisY').setAttribute('aria-pressed',String(!isX));$('methodCross').setAttribute('aria-pressed',String(cross));$('methodShell').setAttribute('aria-pressed',String(!cross));
+    plane();solid();
+  }
+  $('axisX').addEventListener('click',()=>{state.axis='x';update()});$('axisY').addEventListener('click',()=>{state.axis='y';update()});$('methodCross').addEventListener('click',()=>{state.method='cross';update()});$('methodShell').addEventListener('click',()=>{state.method='shell';update()});$('slice').addEventListener('input',e=>{state.s=Number(e.target.value);update()});update();
+})();
+</script>
+</body>
+</html>
