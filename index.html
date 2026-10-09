@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
   <title>旋转体体积｜从平面切片到空间微元</title>
+  <script>document.documentElement.classList.toggle('embedded',window.self!==window.top || new URLSearchParams(location.search).has('embed'));</script>
   <style>
     :root{--paper:#f7f4eb;--ink:#182e34;--muted:#52656a;--line:#cbd6cf;--teal:#087c78;--tealSoft:#dcece6;--coral:#c4563e;--gold:#c58b37;--white:#fffdf7}
     *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",sans-serif;line-height:1.55}
@@ -19,6 +20,21 @@
     .readout{margin-top:14px;display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.74fr);gap:14px}.card{background:#e7eee9;border:1px solid #cbd9d1;padding:20px 23px}.card.dark{background:var(--ink);border-color:var(--ink);color:#fff}.tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.13em;color:var(--teal);margin-bottom:9px}.dark .tag{color:#a8dad0}.method-title{font:700 clamp(20px,2.2vw,28px) Georgia,"Noto Serif SC",serif;margin:0 0 10px}.formula{font:600 clamp(20px,2.5vw,30px) Georgia,"Times New Roman",serif;letter-spacing:.02em;margin:0 0 5px;overflow-wrap:anywhere}.subformula{font-size:14px;margin:0;color:#c5e1dc}.values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.value{border-bottom:1px solid #bed0c9;padding-bottom:8px}.value span{display:block;font-size:12px;color:var(--muted)}.value strong{display:block;font:700 21px Georgia,"Microsoft YaHei",serif;color:var(--ink);margin-top:3px}.value:last-child{grid-column:1/-1;border:0;padding:0}.note{font-size:13px;color:var(--muted);margin:18px 1px 0}.note strong{color:var(--ink)}
     @media(max-width:900px){.controlbar{grid-template-columns:1fr 1fr}.slider-box{grid-column:1/-1}.stage{grid-template-columns:1fr}.readout{grid-template-columns:1fr}.panel{padding:16px}.scene{max-height:450px}}
     @media(max-width:520px){.wrap{padding:18px 11px 28px}.mast{padding-top:11px}.mark{width:38px;min-width:38px;height:38px;font-size:14px}.controlbar{grid-template-columns:minmax(0,1fr);gap:14px;padding:14px;margin-top:20px}.controlbar>div{min-width:0}.toggle button{padding:8px 9px;font-size:12px}.panel-head{display:block}.panel small{display:block;margin-top:3px}.caption{font-size:12px}.card{padding:16px}.formula{font-size:20px}}
+    /* Obsidian and other iframe hosts need controls and both linked views together. */
+    html.embedded body{background:var(--white)}html.embedded body::before{display:none}
+    html.embedded .wrap{max-width:none;padding:8px}
+    html.embedded .mast,html.embedded .hint,html.embedded .note{display:none}
+    html.embedded .controlbar{position:sticky;top:0;z-index:20;grid-template-columns:auto auto minmax(175px,1fr);gap:12px;align-items:center;margin:0 0 8px;padding:9px 12px;box-shadow:0 4px 14px #182e341c}
+    html.embedded .control-label{font-size:10px;margin-bottom:4px}html.embedded .toggle button{padding:6px 10px;font-size:12px}html.embedded .slider-box{grid-column:auto}html.embedded input[type=range]{margin-top:5px}
+    html.embedded .stage{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+    html.embedded .panel{padding:9px 10px 5px}html.embedded .panel-head{display:flex;align-items:baseline;padding-bottom:4px}html.embedded .panel h2{font-size:14px}html.embedded .panel small{display:none}
+    html.embedded .scene{max-height:none}html.embedded .caption{min-height:0;margin:0 0 3px;font-size:11px;line-height:1.35}
+    html.embedded .readout{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-top:8px}html.embedded .card{padding:9px 12px}
+    html.embedded .tag{font-size:9px;margin-bottom:2px}html.embedded .method-title{font-size:16px;margin:0 0 2px}html.embedded .formula{font-size:18px;margin:0 0 2px}html.embedded .subformula{font-size:11px}
+    html.embedded .value{padding-bottom:3px}html.embedded .value span{font-size:10px}html.embedded .value strong{font-size:16px;margin-top:0}
+    @media(max-width:620px){html.embedded .controlbar{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}html.embedded .slider-box{grid-column:1/-1}}
+    @media(max-width:500px){html.embedded .stage,html.embedded .readout{grid-template-columns:1fr}}
+    @media(max-width:470px){html.embedded .controlbar{grid-template-columns:1fr}html.embedded .controlbar>div{min-width:0}}
     @media(prefers-reduced-motion:no-preference){.panel,.card{animation:rise .55s both}.stage .panel:nth-child(2){animation-delay:.08s}.readout .card{animation-delay:.15s}@keyframes rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}}
   </style>
 </head>
